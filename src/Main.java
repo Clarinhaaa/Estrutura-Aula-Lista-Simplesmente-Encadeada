@@ -9,12 +9,12 @@ public class Main {
         lista.adicionarFinal(4);
         lista.adicionarFinal(5);
 
-        lista.adicionarPosicao(6, 3);
+        lista.adicionarPosicao(6, 1);
 
         lista.imprimir();
         System.out.println("Quantidade de elementos da lista: " + lista.size());
 
-        lista.excluirPosicao(4);
+        lista.excluirFinal();
 
         lista.imprimir();
         System.out.println("Quantidade de elementos da lista: " + lista.size());

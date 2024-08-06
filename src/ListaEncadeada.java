@@ -3,6 +3,8 @@ public class ListaEncadeada<T> {
     private Celula<T> ultima;
     private int totalElementos = 0;
 
+    // * ADICIONAR
+
     public void adicionarInicio(T elemento) {
         Celula<T> nova = new Celula<T>(elemento, this.primeira);
         this.primeira = nova;
@@ -27,21 +29,64 @@ public class ListaEncadeada<T> {
     }
 
     public void adicionarPosicao(T elemento, int posicao) {
-        Celula<T> nova = new Celula<T>(elemento);
-        Celula<T> aux = this.pesquisarCelula(posicao - 1);
+        if (!this.validarPosicao(posicao))
+            throw new IllegalArgumentException("Posição inválida");
 
-        nova.setProxima(aux.getProxima());
+        if (posicao == 0) {
+            this.adicionarInicio(elemento);
+            return;
+        }
+
+        if (posicao == this.totalElementos - 1) {
+            this.adicionarFinal(elemento);
+            return;
+        }
+
+        Celula<T> aux = this.pesquisarCelula(posicao - 1);
+        Celula<T> nova = new Celula<T>(elemento, aux.getProxima());
+
         aux.setProxima(nova);
+
         this.totalElementos++;
     }
 
-    // * Não sei se vai criar outros métodos para excluir no início e no final
-    // * depois, então vou testar sem a primeira e última posições da lista */
-    public void excluirPosicao(int posicao) {
-        Celula<T> celulaParaExcluir;
-        Celula<T> aux = this.pesquisarCelula(posicao - 1);
+    // * EXCLUIR
 
-        celulaParaExcluir = aux.getProxima();
+    public void excluirInicio() {
+        Celula<T> aux = this.primeira;
+        this.primeira = aux.getProxima();
+        aux.setElemento(null);
+        aux.setProxima(null);
+
+        this.totalElementos--;
+    }
+
+    public void excluirFinal() {
+        Celula<T> penultima = this.pesquisarCelula(this.totalElementos - 2);
+        Celula<T> celulaParaExcluir = penultima.getProxima();
+        this.ultima = penultima;
+        celulaParaExcluir.setElemento(null);
+
+        this.totalElementos--;
+    }
+
+    public void excluirPosicao(int posicao) {
+        if (!this.validarPosicao(posicao))
+            throw new IllegalArgumentException("Posição inválida");
+
+        if (posicao == 0) {
+            this.excluirInicio();
+            return;
+        }
+
+        if (posicao == this.totalElementos - 1) {
+            this.excluirFinal();
+            return;
+        }
+
+        Celula<T> aux = this.pesquisarCelula(posicao - 1);
+        Celula<T> celulaParaExcluir = aux.getProxima();
+
         aux.setProxima(this.pesquisarCelula(posicao + 1));
 
         celulaParaExcluir.setElemento(null);
@@ -50,9 +95,11 @@ public class ListaEncadeada<T> {
         this.totalElementos--;
     }
 
+    // * OUTROS
+
     public Celula<T> pesquisarCelula(int posicao) {
         Celula<T> aux = this.primeira;
-        
+
         for (int i = 0; i < posicao; i++) {
             aux = aux.getProxima();
         }
@@ -73,5 +120,9 @@ public class ListaEncadeada<T> {
 
     public int size() {
         return this.totalElementos;
+    }
+
+    private boolean validarPosicao(int posicao) {
+        return (posicao >= 0 && posicao <= this.totalElementos - 1);
     }
 }
